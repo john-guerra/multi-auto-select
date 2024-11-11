@@ -12,7 +12,7 @@ const copyrights = readFileSync("./LICENSE", "utf-8")
   .filter((line) => /^copyright\s+/i.test(line))
   .map((line) => line.replace(/^copyright\s+/i, ""));
 
-const filename = "multiAutoSelect";
+const filename = "MultiAutoSelect";
 
 // Observable Plot style
 const config = {
@@ -27,7 +27,7 @@ const config = {
       sortablejs: "Sortable",
       "d3-format": "d3format",
     },
-    name: "multiAutoSelect",
+    name: "MultiAutoSelect",
   },
   plugins: [commonjs(), json(), node()],
 };
