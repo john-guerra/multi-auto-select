@@ -35,7 +35,7 @@ You can also use it [directly from Observable as seen on this example](https://o
         
         // Listen to input events
         const onInput = (e) => {     
-          console.log("onInput", myInput.value);       
+          if (DEBUG) console.log("onInput", myInput.value);       
           document.getElementById("status").innerText =
             `Current Selection ${myInput.value.join(", ")}`;
         };

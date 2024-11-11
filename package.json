@@ -10,23 +10,26 @@
   "jsdelivr": "dist/multiAutoSelect.min.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "pretest": "npm run build"
+    "dev": "rollup -c -w"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-html": "^8.1.2",
+    "jsdom": "^16.0.0",
+    "mocha": "^9.2.2",
     "prettier": "^3.3.3",
     "rollup": "^4.20.0"
   },
   "dependencies": {
-    "@john-guerra/multi-auto-select": "https://api.observablehq.com/@john-guerra/multi-auto-select@latest.tgz?v=3",
-    "@observablehq/runtime": "^5.9.8",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "rollup-plugin-ascii": "^0.0.3",
-    "rollup-plugin-commonjs": "^10.1.0"
+    "d3-format": "^3.1.0",
+    "htl": "^0.3.1",
+    "reactive-widget-helper": "^0.0.1",
+    "sortablejs": "^1.15.3"
   },
   "author": {
     "name": "John Alexis Guerra Gómez",

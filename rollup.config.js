@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import node from "@rollup/plugin-node-resolve";
-import commonjs from "rollup-plugin-commonjs";
+import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
 // import babel from "rollup-plugin-babel";
 import json from "@rollup/plugin-json";
@@ -17,15 +17,16 @@ const filename = "multiAutoSelect";
 // Observable Plot style
 const config = {
   input: "src/index.js",
-  // external: ["@observablehq/runtime", "@john-guerra/multi-auto-select"],
+  external: ["@observablehq/stdlib", "sortablejs", "d3-format"],
   output: {
     indent: false,
     banner: `// ${meta.name} v${meta.version} Copyright ${copyrights.join(", ")}`,
     extend: true,
-    // globals: {
-    //   "@observablehq/runtime": "observableRuntime",
-    //   "@john-guerra/multi-auto-select": "notebookUrl",
-    // },
+    globals: {
+      "@observablehq/stdlib": "html",
+      sortablejs: "Sortable",
+      "d3-format": "d3format",
+    },
     name: "multiAutoSelect",
   },
   plugins: [commonjs(), json(), node()],
@@ -44,8 +45,8 @@ export default [
     ...config,
     output: {
       ...config.output,
-      format: "es",
-      file: `dist/${filename}.es.js`,
+      format: "esm",
+      file: `dist/${filename}.esm.js`,
     },
   },
   {

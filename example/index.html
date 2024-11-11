@@ -5,39 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>multiAutoSelect test</title>
   </head>
-  <body>
-    <div id="target"></div>
+  <style>
     
+  </style>
+  <body>
+    <h1>multiAutoSelect test</h1>
+    <div id="target"></div>
+
     <div id="status"></div>
-    <script src="https://unpkg.com/multi-auto-select/dist/multiAutoSelect.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-format"></script>
+    <script src="https://cdn.jsdelivr.net/npm/multiAutoSelect.js"></script>
     <!-- <script src="../dist/multiAutoSelect.js"></script> -->
 
     <script>
-      
-      async function runtIt() {
-        // the loader function returns a promise with the constructor
-        const multiAutoSelectConstructor = await multiAutoSelect.loader();
-
-        // create your input, returns an html input element
-        const myInput = multiAutoSelectConstructor(["a", "b", "c"], {
-          label: "Select some options",
-          value: ["a"],
-        });
+      // create your input, returns an html input element
+      const myInput = multiAutoSelect(["a", "b", "c"], {
+        label: "Select some options",
+        value: ["b", "a"],
         
-        // Listen to input events
-        const onInput = (e) => {     
-          console.log("onInput", myInput.value);       
-          document.getElementById("status").innerText =
-            `Current Selection ${myInput.value.join(", ")}`;
-        };
-        myInput.addEventListener("input", onInput);
-        onInput();
+      });
 
-        // Append your input element to the page
-        document.getElementById("target").appendChild(myInput);
-      }
+      // Listen to input events
+      const onInput = (e) => {
+        console.log("onInput", myInput.value);
+        document.getElementById("status").innerText =
+          `Current Selection ${myInput.value.join(", ")}`;
+      };
+      myInput.addEventListener("input", onInput);
+      onInput();
 
-      runtIt();
+      // Append your input element to the page
+      document.getElementById("target").appendChild(myInput);
     </script>
   </body>
 </html>
