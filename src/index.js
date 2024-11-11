@@ -65,9 +65,11 @@ export default function MultiAutoSelect() {
   }
 
   // Renders one option
-  const renderSelected = (d) => {
+  const renderSelected = (d, i) => {
     const button = html`<button type="button" class="remove">&times;</button>`;
-    const ele = html`<span class="pill">${format(attr(d))} ${button}</span>`;
+    const ele = html`<span class="pill" value_index=${i}
+      >${format(attr(d))} ${button}</span
+    >`;
 
     button.addEventListener("click", () => removeOption(d));
 
@@ -78,7 +80,7 @@ export default function MultiAutoSelect() {
   function renderSelection() {
     if (debug) console.log("renderSelection", form.value);
     fmOutput.innerHTML = "";
-    form.value.map((v) => fmOutput.appendChild(renderSelected(v)));
+    form.value.map((v, i) => fmOutput.appendChild(renderSelected(v, i)));
 
     fmDatalist.innerHTML = "";
     // Update remaining options
@@ -204,7 +206,7 @@ export default function MultiAutoSelect() {
     },
     onUpdate: () => {
       form.setValue(
-        [...fmOutput.childNodes].map((a) => a.childNodes[0].nodeValue.trim())
+        [...fmOutput.childNodes].map((a) => form.value[+a.getAttribute("value_index")])
       );
       removeArea.style.display = "none";
     },
@@ -225,15 +227,11 @@ export default function MultiAutoSelect() {
       if (debug)
         console.log(
           "removeArea",
-          evt.item.childNodes[0].nodeValue.trim(),
-          options.filter(
-            (o) => format(attr(o)) === evt.item.childNodes[0].nodeValue.trim()
-          )
+          evt.item,
+          +evt.item.getAttribute("value_index")
         );
       removeOption(
-        options.filter(
-          (o) => format(attr(o)) === evt.item.childNodes[0].nodeValue.trim()
-        )[0]
+        form.value[+evt.item.getAttribute("value_index")]
       );
       evt.item.remove();
       removeArea.style.display = "none";
