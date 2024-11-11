@@ -3,33 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>multiAutoSelect test</title>
+    <title>multi-auto-select test</title>
   </head>
-  <style>
-    
-  </style>
+  <style></style>
   <body>
-    <h1>multiAutoSelect test</h1>
+    <h1>multi-auto-select test</h1>
     <div id="target"></div>
-
+    <br>
     <div id="status"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-format"></script>
-    <script src="https://cdn.jsdelivr.net/npm/multiAutoSelect.js"></script>
-    <!-- <script src="../dist/multiAutoSelect.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/multi-auto-select"></script> -->
+    <script src="../dist/MultiAutoSelect.js"></script>
 
     <script>
       // create your input, returns an html input element
       const myInput = MultiAutoSelect(["a", "b", "c"], {
-        label: "Select some options",
-        value: ["b", "a"],
-        
+        label: "Label",
+        value: ["b", "c"],
+        placeholder: "placeholder",
+        title: "Title",
+        description: "Input description",
       });
 
       // Listen to input events
-      const onInput = (e) => {
-        console.log("onInput", myInput.value);
+      const onInput = () => {
         document.getElementById("status").innerText =
           `Current Selection ${myInput.value.join(", ")}`;
       };

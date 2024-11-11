@@ -15,18 +15,17 @@ export default function MultiAutoSelect() {
   }
 
   let {
-    value = [],
-    title,
-    description,
-    disabled,
-    // autocomplete = "off",
-    placeholder,
-    // size,
-    options,
-    label = "",
-    list = uid("autoSelect").id,
-    // list = "__autoSelect",
+    value = [], // The selected values, an array
+    options, // An array of options
+    label = "", // Label to show next to the input
+    placeholder, // Placeholder text
+    id = uid("autoSelect").id,
     attr = (d) => d, // an accessor on what attribute of the object to use
+    title, // The title of the widget, a header on top
+    description, // Small text description on the bottom
+    disabled, // If the input is disabled
+    format = d => d, // Format the value when selected
+    style, // CSS style
     debug = false,
   } = Array.isArray(config) ? { options: config } : config;
 
@@ -41,7 +40,7 @@ export default function MultiAutoSelect() {
       : [value]
     : [];
 
-  // Adds the current input value to the selected list
+  // Adds the current input value to the selected id
   const addToSelected = () => {
     if (debug)
       console.log(
@@ -58,31 +57,18 @@ export default function MultiAutoSelect() {
     }
   };
 
+  function removeOption(d) {
+    if (debug) console.log("Click remove", d, form.value);
+    form.setValue(form.value.filter((old) => old !== d));
+    fmInput.focus();
+  }
+
   // Renders one option
   const renderSelected = (d) => {
-    const button = html`<button type="button" style="margin:0px; padding:0px;">
-      ✖️
-    </button>`;
-    const ele = html`<span
-      style="display: inline-block; margin: 7px 2px; border: solid 1px #ccc; border-radius: 5px;padding: 3px 6px; cursor:move; box-shadow: 1px 1px 1px #777; background: white"
-      >${attr(d)} ${button}</span
-    >`;
+    const button = html`<button type="button" class="remove">&times;</button>`;
+    const ele = html`<span class="pill">${format(d)} ${button}</span>`;
 
-    function removeOption() {
-      if (debug)
-        console.log(
-          "Click remove",
-          d,
-          form.value,
-          form.value.filter((old) => old !== d)
-        );
-      form.setValue(form.value.filter((old) => old !== d));
-      // remove the element directly
-      ele.remove();
-      fmInput.focus();
-    }
-
-    button.addEventListener("click", removeOption);
+    button.addEventListener("click", () => removeOption(d));
 
     return ele;
   };
@@ -108,36 +94,79 @@ export default function MultiAutoSelect() {
 
   const fmOutput = html`<output
     name="output"
-    style="font: 14px Menlo, Consolas, monospace; margin-left: 0px;"
+    class="selected-options"
   ></output>`;
-  const fmInput = html`<input     
+  const fmInput = html`<input
     name="input"
     type="text"
     autocomplete="off"
     placeholder="${placeholder || ""}"
-    style="font-size: 1em;"
-    list=${list}
+    id=${id}
   />`;
   disabled && fmInput.setAttribute("disabled", true);
-  const fmDatalist = html`<datalist id="${list}"></datalist>`;
+  const fmDatalist = html`<datalist id="${id}"></datalist>`;
+  const removeArea = html`<span id="remove-area"></span>`;
 
-  
   const form = ReactiveWidget(
     html`
-      <form style="min-height: 2.5em">
+      <form style="min-height: 2.5em" class="multi-auto-select">
         <style>
           .sortable-ghost {
             opacity: 0.3;
           }
+          .pill {
+            display: inline-block;
+            margin: 7px 2px;
+            border: solid 1px #ccc;
+            border-radius: 5px;
+            padding: 3px 6px;
+            cursor: move;
+            box-shadow: 1px 1px 1px #777;
+            background: white;
+          }
+          .title {
+            font: 700 0.9rem sans-serif;
+            margin-bottom: 3px;
+          }
+          .description {
+            font-size: 0.85rem;
+            font-style: italic;
+            margin-top: 3px;
+          }
+          input {
+            font-size: 1em;
+          }
+          .selected-options {
+            font:
+              14px Menlo,
+              Consolas,
+              monospace;
+            margin-left: 0px;
+          }
+          button.remove {
+            margin: 0px;
+            padding: 5px;
+          }
+          .options #remove-area {
+            display: none;
+            border: 2px dashed #f60;
+            height: 100%;
+          }
+          #remove-area::before {
+            color: #ccc;
+            font-size: 1.2em;
+            content: 'Remove';
+            text-align: center;
+            padding-top: 15px;
+          }
+
+          ${style}
         </style>
-        <div style="font: 700 0.9rem sans-serif; margin-bottom: 3px;">
-          ${title}
-        </div>
+        <div class="title">${title}</div>
         <div>${label ? html`<label>${label}</label>` : ""} ${fmInput}</div>
-        ${fmDatalist} ${fmOutput}
-        <div style="font-size: 0.85rem; font-style: italic; margin-top: 3px;">
-          ${description}
-        </div>
+        ${fmDatalist}
+        <div class="options">${fmOutput} ${removeArea}</div>
+        <div class="description">${description}</div>
       </form>
     `,
     { value, showValue: renderSelection }
@@ -166,14 +195,36 @@ export default function MultiAutoSelect() {
   sortable = Sortable.create(fmOutput, {
     ghostClass: "sortable-ghost",
     animation: 150,
+    group: {
+      name: "shared",
+      pull: "clone",
+    },
+    onUpdate: () => {
+      form.setValue(
+        [...fmOutput.childNodes].map((a) => a.childNodes[0].nodeValue.trim())
+      );
+      removeArea.style.display = "none";
+    }
   });
 
-  //Update event will be triggered when the user drag the selected components
-  Sortable.utils.on(fmOutput, "update", () => {
-    form.setValue(
-      [...fmOutput.childNodes].map((a) => a.childNodes[0].nodeValue.trim())
-    );
+  fmOutput.addEventListener("dragstart", () => {
+    removeArea.style.display = "inline-block";
   });
-
+  fmOutput.addEventListener("dragend", () => {
+    removeArea.style.display = "none";
+  });
+  Sortable.create(removeArea, {
+    group: {
+      name: "shared",
+      put: true,
+    },
+    onAdd: function (evt) {
+      console.log("removeArea", evt, evt.item.childNodes[0].nodeValue.trim());
+      removeOption(evt.item.childNodes[0].nodeValue.trim());
+      evt.item.remove();
+      removeArea.style.display = "none";
+    },
+  });
+  
   return form;
 }
