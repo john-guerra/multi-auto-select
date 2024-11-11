@@ -3,11 +3,11 @@
   "version": "0.0.4",
   "description": "A simple reactive input component for selecting an ordered list of multiple elements out of a list",
   "type": "module",
-  "main": "dist/multiAutoSelect.min.js",
-  "module": "dist/multiAutoSelect.es.js",
-  "browser": "dist/multiAutoSelect.min.js",
-  "unpkg": "dist/multiAutoSelect.min.js",
-  "jsdelivr": "dist/multiAutoSelect.min.js",
+  "main": "dist/MultiAutoSelect.min.js",
+  "module": "dist/MultiAutoSelect.es.js",
+  "browser": "dist/MultiAutoSelect.min.js",
+  "unpkg": "dist/MultiAutoSelect.min.js",
+  "jsdelivr": "dist/MultiAutoSelect.min.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w"
