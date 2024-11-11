@@ -1,6 +1,6 @@
 {
   "name": "multi-auto-select",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple reactive input component for selecting an ordered list of multiple elements out of a list",
   "type": "module",
   "main": "dist/multiAutoSelect.min.js",
