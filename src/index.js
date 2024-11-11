@@ -24,8 +24,9 @@ export default function MultiAutoSelect() {
     title, // The title of the widget, a header on top
     description, // Small text description on the bottom
     disabled, // If the input is disabled
-    format = d => d, // Format the value when selected
+    format = (d) => d, // Format the value when selected
     style, // CSS style
+    autocomplete = "off",
     debug = false,
   } = Array.isArray(config) ? { options: config } : config;
 
@@ -66,7 +67,7 @@ export default function MultiAutoSelect() {
   // Renders one option
   const renderSelected = (d) => {
     const button = html`<button type="button" class="remove">&times;</button>`;
-    const ele = html`<span class="pill">${format(d)} ${button}</span>`;
+    const ele = html`<span class="pill">${format(attr(d))} ${button}</span>`;
 
     button.addEventListener("click", () => removeOption(d));
 
@@ -99,9 +100,9 @@ export default function MultiAutoSelect() {
   const fmInput = html`<input
     name="input"
     type="text"
-    autocomplete="off"
+    autocomplete=${autocomplete || "off"}
     placeholder="${placeholder || ""}"
-    id=${id}
+    list=${id}
   />`;
   disabled && fmInput.setAttribute("disabled", true);
   const fmDatalist = html`<datalist id="${id}"></datalist>`;
@@ -145,7 +146,7 @@ export default function MultiAutoSelect() {
           }
           button.remove {
             margin: 0px;
-            padding: 5px;
+            padding: 3px;
           }
           .options #remove-area {
             display: none;
@@ -163,8 +164,10 @@ export default function MultiAutoSelect() {
           ${style}
         </style>
         <div class="title">${title}</div>
-        <div>${label ? html`<label>${label}</label>` : ""} ${fmInput}</div>
-        ${fmDatalist}
+        <div>
+          ${label ? html`<label>${label}</label>` : ""} ${fmInput}${fmDatalist}
+        </div>
+
         <div class="options">${fmOutput} ${removeArea}</div>
         <div class="description">${description}</div>
       </form>
@@ -204,7 +207,7 @@ export default function MultiAutoSelect() {
         [...fmOutput.childNodes].map((a) => a.childNodes[0].nodeValue.trim())
       );
       removeArea.style.display = "none";
-    }
+    },
   });
 
   fmOutput.addEventListener("dragstart", () => {
@@ -219,12 +222,23 @@ export default function MultiAutoSelect() {
       put: true,
     },
     onAdd: function (evt) {
-      console.log("removeArea", evt, evt.item.childNodes[0].nodeValue.trim());
-      removeOption(evt.item.childNodes[0].nodeValue.trim());
+      if (debug)
+        console.log(
+          "removeArea",
+          evt.item.childNodes[0].nodeValue.trim(),
+          options.filter(
+            (o) => format(attr(o)) === evt.item.childNodes[0].nodeValue.trim()
+          )
+        );
+      removeOption(
+        options.filter(
+          (o) => format(attr(o)) === evt.item.childNodes[0].nodeValue.trim()
+        )[0]
+      );
       evt.item.remove();
       removeArea.style.display = "none";
     },
   });
-  
+
   return form;
 }

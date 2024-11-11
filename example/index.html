@@ -22,9 +22,11 @@
       const myInput = MultiAutoSelect(["a", "b", "c"], {
         label: "Label",
         value: ["b", "c"],
-        placeholder: "placeholder",
+        placeholder: "",
         title: "Title",
         description: "Input description",
+        format: d => d.toUpperCase(),
+        debug: true,
       });
 
       // Listen to input events
