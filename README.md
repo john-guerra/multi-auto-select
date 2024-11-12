@@ -4,6 +4,31 @@ A simple [reactive widget](https://johnguerra.co/reactiveWidgets) for selecting 
 
 You can also use it [directly from Observable as seen on this example](https://observablehq.com/@john-guerra/import-observable-notebook-libraries-in-vanila-js)
 
+## Usage
+
+npm install multi-auto-select
+
+## Options
+
+
+```js
+{
+  value = [], // The selected values, an array
+  options, // An array of options
+  label = "", // Label to show next to the input
+  placeholder, // Placeholder text
+  id = uid("autoSelect").id,
+  attr = (d) => d, // an accessor on what attribute of the object to use
+  title, // The title of the widget, a header on top
+  description, // Small text description on the bottom
+  disabled, // If the input is disabled
+  format = (d) => d, // Format the value when selected
+  style, // CSS style
+  sortable = true, // Enable or disable sorting
+  debug = false
+}
+```    
+
 ## Example Usage
 
 ```js
@@ -34,3 +59,4 @@ You can also use it [directly from Observable as seen on this example](https://o
 </script>
 ``
 ```
+
