@@ -2,17 +2,18 @@
 
 A simple [reactive widget](https://johnguerra.co/reactiveWidgets) for selecting an ordered list of multiple elements out of a list.
 
-You can also use it [directly from Observable as seen on this example](https://observablehq.com/@john-guerra/import-observable-notebook-libraries-in-vanila-js)
+* [See it in action in CodePen](https://codepen.io/duto_guerra/pen/dyxwwdv)
+* [Or use it in Observable](https://observablehq.com/@john-guerra/multi-auto-select)
 
-## Install
+## Usage
 
-```
-npm install multi-auto-select
+```js
+<script src="https://cdn.jsdelivr.net/npm/multiAutoSelect.js"></script>
 ```
 
 then
 
-```
+```js
 const domElement = MultiAutoSelect(arrayOfOptions, {...options} )
 ```
 
@@ -20,9 +21,10 @@ Where _domElement_ will be a DOM Element that you can insert in your DOM using m
 
 If you are using Observable notebooks you can use the handy _viewof_ operator to get reactive value 
 
-```
+```js
 MultiAutoSelect = require("multi-auto-select")
 
+//on a different cell
 viewof selection = MultiAutoSelect(arrayOfOptions, {...options} )
 ```
 
@@ -75,6 +77,7 @@ viewof selection = MultiAutoSelect(arrayOfOptions, {...options} )
   // Append your input element to the page
   document.getElementById("target").appendChild(myInput);
 </script>
-``
 ```
+
+[See the demo in CodePen](https://codepen.io/duto_guerra/pen/dyxwwdv)
 
