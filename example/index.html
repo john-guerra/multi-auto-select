@@ -14,8 +14,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-format"></script>
-    <script src="https://cdn.jsdelivr.net/npm/multi-auto-select"></script>
-    <!-- <script src="../dist/MultiAutoSelect.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/multi-auto-select@0.0.5"></script> -->
+    <script src="../dist/MultiAutoSelect.js"></script>
 
     <script>
       // create your input, returns an html input element
@@ -26,6 +26,7 @@
         title: "Title",
         description: "Input description",
         format: d => d.toUpperCase(),
+        sortable: true, 
         debug: true,
       });
 

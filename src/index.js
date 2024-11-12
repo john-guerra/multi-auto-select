@@ -27,10 +27,11 @@ export default function MultiAutoSelect() {
     format = (d) => d, // Format the value when selected
     style, // CSS style
     autocomplete = "off",
+    sortable = true,
     debug = false,
   } = Array.isArray(config) ? { options: config } : config;
 
-  let sortable = null;
+  let sortableObj = null;
 
   const optionsMap = new Map(options.map((o) => ["" + attr(o), o])); // We need the map with strings
 
@@ -67,7 +68,7 @@ export default function MultiAutoSelect() {
   // Renders one option
   const renderSelected = (d, i) => {
     const button = html`<button type="button" class="remove">&times;</button>`;
-    const ele = html`<span class="pill" value_index=${i}
+    const ele = html`<span class="pill" draggable="true" value_index=${i}
       >${format(attr(d))} ${button}</span
     >`;
 
@@ -107,6 +108,7 @@ export default function MultiAutoSelect() {
     list=${id}
   />`;
   disabled && fmInput.setAttribute("disabled", true);
+  const btnClearAll = html`<button type="button" class="clearAll">Clear All</button>`;
   const fmDatalist = html`<datalist id="${id}"></datalist>`;
   const removeArea = html`<span id="remove-area"></span>`;
 
@@ -155,6 +157,9 @@ export default function MultiAutoSelect() {
             border: 2px dashed #f60;
             height: 100%;
           }
+          .options:hover #remove-area, .options:focus #remove-area, .options:focus-within #remove-area {
+            display: inline-block;
+          }
           #remove-area::before {
             color: #ccc;
             font-size: 1.2em;
@@ -162,21 +167,33 @@ export default function MultiAutoSelect() {
             text-align: center;
             padding-top: 15px;
           }
+          button.clearAll {
+            font-size: 0.8em;
+            margin-left: 5px;
+            padding: 2px 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+          }
 
           ${style}
         </style>
         <div class="title">${title}</div>
         <div>
-          ${label ? html`<label>${label}</label>` : ""} ${fmInput}${fmDatalist}
+          ${label ? html`<label>${label}</label>` : ""} ${fmInput}${fmDatalist}${btnClearAll}
         </div>
 
-        <div class="options">${fmOutput} ${removeArea}</div>
+        <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
         <div class="description">${description}</div>
       </form>
     `,
     { value, showValue: renderSelection }
   );
 
+  btnClearAll.addEventListener("click", () => {
+    form.setValue([]);
+  });
   fmInput.addEventListener("input", function (e) {
     e.stopPropagation();
     if (debug) console.log("multiAutoSelect input", e);
@@ -196,47 +213,50 @@ export default function MultiAutoSelect() {
 
   renderSelection();
 
-  if (sortable) sortable.destroy();
-  sortable = Sortable.create(fmOutput, {
-    ghostClass: "sortable-ghost",
-    animation: 150,
-    group: {
-      name: "shared",
-      pull: "clone",
-    },
-    onUpdate: () => {
-      form.setValue(
-        [...fmOutput.childNodes].map((a) => form.value[+a.getAttribute("value_index")])
-      );
-      removeArea.style.display = "none";
-    },
-  });
-
-  fmOutput.addEventListener("dragstart", () => {
+  function enableRemoveArea() {
     removeArea.style.display = "inline-block";
-  });
-  fmOutput.addEventListener("dragend", () => {
-    removeArea.style.display = "none";
-  });
-  Sortable.create(removeArea, {
-    group: {
-      name: "shared",
-      put: true,
-    },
-    onAdd: function (evt) {
-      if (debug)
-        console.log(
-          "removeArea",
-          evt.item,
-          +evt.item.getAttribute("value_index")
+  }
+
+  if (sortable) {
+    if (sortableObj) sortableObj.destroy();
+    sortableObj = Sortable.create(fmOutput, {
+      ghostClass: "sortable-ghost",
+      animation: 150,
+      group: {
+        name: "shared",
+        pull: "clone",
+      },
+      onStart: enableRemoveArea,
+      onUpdate: () => {
+        form.setValue(
+          [...fmOutput.childNodes].map(
+            (a) => form.value[+a.getAttribute("value_index")]
+          )
         );
-      removeOption(
-        form.value[+evt.item.getAttribute("value_index")]
-      );
-      evt.item.remove();
-      removeArea.style.display = "none";
-    },
-  });
+        removeArea.style.display = "none";
+      },
+    });
+    fmOutput.addEventListener("drag", enableRemoveArea);
+    fmOutput.addEventListener("dragend", enableRemoveArea);
+    
+    Sortable.create(removeArea, {
+      group: {
+        name: "shared",
+        put: true,
+      },
+      onAdd: function (evt) {
+        if (debug)
+          console.log(
+            "removeArea",
+            evt.item,
+            +evt.item.getAttribute("value_index")
+          );
+        removeOption(form.value[+evt.item.getAttribute("value_index")]);
+        evt.item.remove();
+        // removeArea.style.display = "none";
+      },
+    });
+  }
 
   return form;
 }
