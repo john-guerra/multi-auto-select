@@ -108,7 +108,9 @@ export default function MultiAutoSelect() {
     list=${id}
   />`;
   disabled && fmInput.setAttribute("disabled", true);
-  const btnClearAll = html`<button type="button" class="clearAll">Clear All</button>`;
+  const btnClearAll = html`<button type="button" class="clearAll">
+    Clear All
+  </button>`;
   const fmDatalist = html`<datalist id="${id}"></datalist>`;
   const removeArea = html`<span id="remove-area"></span>`;
 
@@ -157,7 +159,7 @@ export default function MultiAutoSelect() {
             border: 2px dashed #f60;
             height: 100%;
           }
-          .options:hover #remove-area, .options:focus #remove-area, .options:focus-within #remove-area {
+          .options:focus #remove-area, .options:focus-within #remove-area {
             display: inline-block;
           }
           #remove-area::before {
@@ -181,7 +183,8 @@ export default function MultiAutoSelect() {
         </style>
         <div class="title">${title}</div>
         <div>
-          ${label ? html`<label>${label}</label>` : ""} ${fmInput}${fmDatalist}${btnClearAll}
+          ${label ? html`<label>${label}</label>` : ""}
+          ${fmInput}${fmDatalist}${btnClearAll}
         </div>
 
         <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
@@ -213,9 +216,8 @@ export default function MultiAutoSelect() {
 
   renderSelection();
 
-  function enableRemoveArea() {
-    removeArea.style.display = "inline-block";
-  }
+  const enableRemoveArea = () => (removeArea.style.display = "inline-block");
+  const hideRemoveArea = () => (removeArea.style.display = "none");
 
   if (sortable) {
     if (sortableObj) sortableObj.destroy();
@@ -233,12 +235,12 @@ export default function MultiAutoSelect() {
             (a) => form.value[+a.getAttribute("value_index")]
           )
         );
-        removeArea.style.display = "none";
+        hideRemoveArea();
       },
     });
     fmOutput.addEventListener("drag", enableRemoveArea);
-    fmOutput.addEventListener("dragend", enableRemoveArea);
-    
+    fmOutput.addEventListener("dragend", hideRemoveArea);
+
     Sortable.create(removeArea, {
       group: {
         name: "shared",
@@ -253,7 +255,7 @@ export default function MultiAutoSelect() {
           );
         removeOption(form.value[+evt.item.getAttribute("value_index")]);
         evt.item.remove();
-        removeArea.style.display = "none";
+        hideRemoveArea();
       },
     });
   }

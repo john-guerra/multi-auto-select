@@ -4,12 +4,30 @@ A simple [reactive widget](https://johnguerra.co/reactiveWidgets) for selecting 
 
 You can also use it [directly from Observable as seen on this example](https://observablehq.com/@john-guerra/import-observable-notebook-libraries-in-vanila-js)
 
-## Usage
+## Install
 
+```
 npm install multi-auto-select
+```
+
+then
+
+```
+const domElement = MultiAutoSelect(arrayOfOptions, {...options} )
+```
+
+Where _domElement_ will be a DOM Element that you can insert in your DOM using methods like appendChild and _domElement.value_ will be an array of the selected attributes. _domElement_ will dispatch an _input_ event every time the selection changes.
+
+If you are using Observable notebooks you can use the handy _viewof_ operator to get reactive value 
+
+```
+MultiAutoSelect = require("multi-auto-select")
+
+viewof selection = MultiAutoSelect(arrayOfOptions, {...options} )
+```
+
 
 ## Options
-
 
 ```js
 {
