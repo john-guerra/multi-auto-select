@@ -253,7 +253,7 @@ export default function MultiAutoSelect() {
           );
         removeOption(form.value[+evt.item.getAttribute("value_index")]);
         evt.item.remove();
-        // removeArea.style.display = "none";
+        removeArea.style.display = "none";
       },
     });
   }
