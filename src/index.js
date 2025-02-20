@@ -69,7 +69,7 @@ export default function MultiAutoSelect() {
   const renderSelected = (d, i) => {
     const button = html`<button type="button" class="remove">&times;</button>`;
     const ele = html`<span class="pill" draggable="true" value_index=${i}
-      >${format(attr(d))} ${button}</span
+      >${format(attr(d), i)} ${button}</span
     >`;
 
     button.addEventListener("click", () => removeOption(d));
