@@ -4,7 +4,7 @@
   "description": "A simple reactive input component for selecting an ordered list of multiple elements out of a list",
   "type": "module",
   "main": "dist/MultiAutoSelect.min.js",
-  "module": "dist/MultiAutoSelect.es.js",
+  "module": "dist/MultiAutoSelect.esm.js",
   "browser": "dist/MultiAutoSelect.min.js",
   "unpkg": "dist/MultiAutoSelect.min.js",
   "jsdelivr": "dist/MultiAutoSelect.min.js",
