@@ -199,7 +199,11 @@ export default function MultiAutoSelect() {
 
           ${style}
         </style>
-        ${title ? html`<div class="title">${title}</div>` : ""}
+        ${inline
+          ? title
+            ? html`<div class="title">${title}</div>`
+            : ""
+          : html`<div class="title">${title}</div>`}
         ${inline
           ? html`<div class="mas-row">
               <span class="input-row"
@@ -215,7 +219,11 @@ export default function MultiAutoSelect() {
               </div>
               <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
             `}
-        ${description ? html`<div class="description">${description}</div>` : ""}
+        ${inline
+          ? description
+            ? html`<div class="description">${description}</div>`
+            : ""
+          : html`<div class="description">${description}</div>`}
       </form>
     `,
     { value, showValue: renderSelection }
