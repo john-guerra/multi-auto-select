@@ -28,6 +28,7 @@ export default function MultiAutoSelect() {
     style, // CSS style
     autocomplete = "off",
     sortable = true,
+    layout = "stacked", // "stacked" (default) | "inline" — inline puts pills beside the input and omits empty title/description
     debug = false,
   } = Array.isArray(config) ? { options: config } : config;
 
@@ -114,9 +115,14 @@ export default function MultiAutoSelect() {
   const fmDatalist = html`<datalist id="${id}"></datalist>`;
   const removeArea = html`<span id="remove-area"></span>`;
 
+  const inline = layout === "inline";
+
   const form = ReactiveWidget(
     html`
-      <form style="min-height: 2.5em" class="multi-auto-select">
+      <form
+        style="min-height: 2.5em"
+        class="multi-auto-select ${inline ? "inline" : ""}"
+      >
         <style>
           .sortable-ghost {
             opacity: 0.3;
@@ -178,17 +184,38 @@ export default function MultiAutoSelect() {
             background: white;
             cursor: pointer;
           }
+          /* Inline layout: input row and pills share one flexible row; pills
+             sit beside the input instead of stacking below it, and empty
+             title/description rows are omitted by the template. */
+          .multi-auto-select.inline .mas-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+          }
+          .multi-auto-select.inline .pill {
+            margin: 2px;
+          }
 
           ${style}
         </style>
-        <div class="title">${title}</div>
-        <div>
-          ${label ? html`<label>${label}</label>` : ""}
-          ${fmInput}${fmDatalist}${btnClearAll}
-        </div>
-
-        <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
-        <div class="description">${description}</div>
+        ${title ? html`<div class="title">${title}</div>` : ""}
+        ${inline
+          ? html`<div class="mas-row">
+              <span class="input-row"
+                >${label ? html`<label>${label}</label>` : ""}
+                ${fmInput}${fmDatalist}${btnClearAll}</span
+              >
+              <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
+            </div>`
+          : html`
+              <div>
+                ${label ? html`<label>${label}</label>` : ""}
+                ${fmInput}${fmDatalist}${btnClearAll}
+              </div>
+              <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
+            `}
+        ${description ? html`<div class="description">${description}</div>` : ""}
       </form>
     `,
     { value, showValue: renderSelection }
