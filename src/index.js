@@ -28,9 +28,16 @@ export default function MultiAutoSelect() {
     style, // CSS style
     autocomplete = "off",
     sortable = true,
-    layout = "stacked", // "stacked" (default) | "inline" — inline puts pills beside the input and omits empty title/description
+    layout = "stacked", // "stacked" (default) | "inline" | "compact"
+    // - inline: pills beside the input (input first), omits empty title/description
+    // - compact: title on top, selected pills FIRST, then a short add-input, then
+    //   an ✕ clear-all — a space-frugal toolbar variant.
     debug = false,
   } = Array.isArray(config) ? { options: config } : config;
+
+  // compact is an inline variant (shares the flex row) with reordered children
+  // and an icon clear-all.
+  const compact = layout === "compact";
 
   let sortableObj = null;
 
@@ -83,6 +90,8 @@ export default function MultiAutoSelect() {
     if (debug) console.log("renderSelection", form.value);
     fmOutput.innerHTML = "";
     form.value.map((v, i) => fmOutput.appendChild(renderSelected(v, i)));
+    // Compact: there's nothing to clear with an empty selection, so hide the ✕.
+    if (compact) btnClearAll.style.display = form.value.length ? "" : "none";
 
     fmDatalist.innerHTML = "";
     // Update remaining options
@@ -109,19 +118,26 @@ export default function MultiAutoSelect() {
     list=${id}
   />`;
   disabled && fmInput.setAttribute("disabled", true);
-  const btnClearAll = html`<button type="button" class="clearAll">
-    Clear All
+  const btnClearAll = html`<button
+    type="button"
+    class="clearAll"
+    title="Clear all selections"
+    aria-label="Clear all selections"
+  >
+    ${compact ? "✕" : "Clear All"}
   </button>`;
   const fmDatalist = html`<datalist id="${id}"></datalist>`;
   const removeArea = html`<span id="remove-area"></span>`;
 
-  const inline = layout === "inline";
+  const inline = layout === "inline" || compact;
 
   const form = ReactiveWidget(
     html`
       <form
         style="min-height: 2.5em"
-        class="multi-auto-select ${inline ? "inline" : ""}"
+        class="multi-auto-select ${inline ? "inline" : ""} ${compact
+          ? "compact"
+          : ""}"
       >
         <style>
           .sortable-ghost {
@@ -196,6 +212,32 @@ export default function MultiAutoSelect() {
           .multi-auto-select.inline .pill {
             margin: 2px;
           }
+          /* Compact: pills come first, then a short add-input, then an ✕ clear.
+             The add-input stays a real autocomplete but takes little width. */
+          .multi-auto-select.compact .mas-row {
+            gap: 4px;
+          }
+          .multi-auto-select.compact .input-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+          }
+          .multi-auto-select.compact input {
+            width: 11ch;
+            min-width: 8ch;
+          }
+          .multi-auto-select.compact button.clearAll {
+            border: none;
+            background: none;
+            color: #888;
+            padding: 0 4px;
+            margin-left: 0;
+            font-size: 1em;
+            line-height: 1;
+          }
+          .multi-auto-select.compact button.clearAll:hover {
+            color: #d00;
+          }
 
           ${style}
         </style>
@@ -206,11 +248,20 @@ export default function MultiAutoSelect() {
           : html`<div class="title">${title}</div>`}
         ${inline
           ? html`<div class="mas-row">
+              ${compact
+                ? html`<div class="options">
+                    ${fmOutput} ${sortable ? removeArea : ""}
+                  </div>`
+                : ""}
               <span class="input-row"
                 >${label ? html`<label>${label}</label>` : ""}
                 ${fmInput}${fmDatalist}${btnClearAll}</span
               >
-              <div class="options">${fmOutput} ${sortable ? removeArea : ""}</div>
+              ${!compact
+                ? html`<div class="options">
+                    ${fmOutput} ${sortable ? removeArea : ""}
+                  </div>`
+                : ""}
             </div>`
           : html`
               <div>
