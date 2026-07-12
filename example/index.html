@@ -3,43 +3,125 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>multi-auto-select test</title>
+    <title>multi-auto-select — layouts demo</title>
   </head>
-  <style></style>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      max-width: 900px;
+    }
+    section {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+    }
+    .hint {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0 0 0.75rem;
+    }
+    .status {
+      font: 13px ui-monospace, monospace;
+      color: #444;
+      margin-top: 0.5rem;
+    }
+    /* A dark toolbar strip, like AutoGallery's, to show `compact` in context. */
+    .toolbar {
+      background: #1a1a1a;
+      color: #e8e8e8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .toolbar .multi-auto-select .pill {
+      background: #2a2a2a !important;
+      color: #eee !important;
+      border-color: #444 !important;
+    }
+    .toolbar .multi-auto-select .title {
+      color: #9a9a9a;
+      font-size: 0.7rem;
+    }
+  </style>
   <body>
-    <h1>multi-auto-select test</h1>
-    <div id="target"></div>
-    <br>
-    <div id="status"></div>
+    <h1>multi-auto-select — layouts</h1>
+
+    <section>
+      <h2><code>layout: "stacked"</code> (default)</h2>
+      <p class="hint">
+        Title, then the input row (input + “Clear All”), then pills below.
+      </p>
+      <div id="stacked"></div>
+      <div class="status" id="stacked-status"></div>
+    </section>
+
+    <section>
+      <h2><code>layout: "inline"</code></h2>
+      <p class="hint">Pills sit beside the input; the input comes first.</p>
+      <div id="inline"></div>
+      <div class="status" id="inline-status"></div>
+    </section>
+
+    <section>
+      <h2><code>layout: "compact"</code> — NEW</h2>
+      <p class="hint">
+        Title on top · selected pills <b>first</b> · short autocomplete
+        “Add…” · <b>✕</b> icon clear-all (tooltip; hidden when empty). Built for
+        space-frugal toolbars.
+      </p>
+      <div class="toolbar"><div id="compact"></div></div>
+      <div class="status" id="compact-status"></div>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-format"></script>
-    <script src="https://cdn.jsdelivr.net/npm/multi-auto-select@0.0.8"></script>
-    <!-- <script src="../dist/MultiAutoSelect.js"></script> -->
+    <!-- Local build, so you can check changes before publishing -->
+    <script src="../dist/MultiAutoSelect.js"></script>
 
     <script>
-      // create your input, returns an html input element
-      const myInput = MultiAutoSelect(["a", "b", "c"], {
-        label: "Label",
-        value: ["b", "c"],
-        placeholder: "",
-        title: "Title",
-        description: "Input description",
-        format: d => d.toUpperCase(),
-        sortable: true, 
-        debug: true,
+      const DIMS = ["folder", "folderName", "year", "month", "day", "camera"];
+
+      function demo(mountId, statusId, opts) {
+        const input = MultiAutoSelect(DIMS, opts);
+        const status = document.getElementById(statusId);
+        const onInput = () => {
+          status.innerText = `value: [${input.value.join(", ")}]`;
+        };
+        input.addEventListener("input", onInput);
+        onInput();
+        document.getElementById(mountId).appendChild(input);
+        return input;
+      }
+
+      demo("stacked", "stacked-status", {
+        value: ["folder", "folderName"],
+        title: "Group by",
+        placeholder: "Add a grouping level…",
+        sortable: true,
       });
 
-      // Listen to input events
-      const onInput = () => {
-        document.getElementById("status").innerText =
-          `Current Selection ${myInput.value.join(", ")}`;
-      };
-      myInput.addEventListener("input", onInput);
-      onInput();
+      demo("inline", "inline-status", {
+        value: ["folder", "folderName"],
+        title: "Group by",
+        placeholder: "Add a grouping level…",
+        sortable: true,
+        layout: "inline",
+      });
 
-      // Append your input element to the page
-      document.getElementById("target").appendChild(myInput);
+      demo("compact", "compact-status", {
+        value: ["folder", "folderName"],
+        title: "Group by",
+        placeholder: "Add…",
+        sortable: true,
+        layout: "compact",
+      });
     </script>
   </body>
 </html>
